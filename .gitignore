@@ -1,0 +1,24 @@
+.venv/
+__pycache__/
+*.py[cod]
+*.egg-info/
+build/
+dist/
+.env
+.env.*
+!.env.example
+data/raw/*
+data/processed/*
+data/cache/
+artifacts/*
+!**/.gitkeep
+
+# Keep authored dashboard code; exclude generated data and release bundles.
+!website/dist/
+website/dist/*
+!website/dist/index.html
+!website/dist/style.css
+!website/dist/app.js
+website/.openai/
+website/dashboard*.jpg
+.DS_Store

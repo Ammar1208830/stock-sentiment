@@ -1,0 +1,25 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "stock-sentiment-lab"
+version = "0.7.0"
+description = "Reproducible evaluation of incremental financial sentiment signals"
+requires-python = ">=3.11"
+dependencies = []
+
+[project.optional-dependencies]
+acquisition = ["exchange-calendars==4.13.2", "yfinance==0.2.66"]
+sentiment = ["torch==2.14.1", "transformers==4.57.6", "safetensors==0.8.0"]
+modeling = ["scikit-learn==1.9.1"]
+reporting = ["matplotlib==3.11.2"]
+
+[project.scripts]
+sentiment-lab = "sentiment_lab.cli:main"
+
+[tool.setuptools.packages.find]
+include = ["sentiment_lab*"]
+
+[tool.setuptools.package-data]
+sentiment_lab = ["fixtures/*.csv", "fixtures/*.jsonl", "fixtures/*.toml"]

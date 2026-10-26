@@ -1,0 +1,6 @@
+{"id":"positive-earnings","text":"The company reported record profits and raised its full-year earnings forecast.","expected_sentiment":"positive","purpose":"plain financial language"}
+{"id":"negative-earnings","text":"The company reported a substantial loss and cut its full-year earnings forecast.","expected_sentiment":"negative","purpose":"plain financial language"}
+{"id":"neutral-announcement","text":"The company will release its quarterly financial results on Tuesday.","expected_sentiment":"neutral","purpose":"factual announcement"}
+{"id":"negative-demand","text":"Revenue declined by 30% and the company warned of weaker demand.","expected_sentiment":"negative","purpose":"plain financial language"}
+{"id":"positive-growth","text":"Quarterly earnings beat analyst expectations and revenue rose sharply.","expected_sentiment":"positive","purpose":"plain financial language"}
+{"id":"sarcasm-challenge","text":"Great, another quarter of losses. Exactly what shareholders wanted.","expected_sentiment":"negative","purpose":"sarcasm stress example; illustrative only"}

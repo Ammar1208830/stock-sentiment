@@ -1,0 +1,12 @@
+schema_version = 1
+seed = 42
+cv_folds = 3
+minimum_fold_train_sessions = 60
+logistic_c = [0.01, 0.1, 1.0, 10.0]
+forest_depths = [3, 6]
+forest_min_leaf = [5, 15]
+forest_trees = 200
+logistic_max_iter = 2000
+coin_seeds = 20
+permutation_repeats = 5
+threshold = 0.5

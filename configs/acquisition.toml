@@ -1,0 +1,17 @@
+schema_version = 1
+# Inclusive TARGET dates; the calendar includes the preceding price session.
+start = "2023-10-23"
+end = "2026-10-23"
+news_lookback_days = 28
+news_daily_request_budget = 90
+news_max_pages_per_day = 3
+news_page_size = 100
+http_attempts = 3
+http_timeout_seconds = 20
+# Historical Yahoo bars do not prove live availability. Preserve that assumption.
+price_availability = "historical_assumption"
+price_latency_minutes = 1
+price_daily_call_budget = 20
+minimum_usable_sessions = 630
+minimum_test_sessions = 126
+minimum_source_coverage = 0.8

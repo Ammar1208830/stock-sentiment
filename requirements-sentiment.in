@@ -1,0 +1,5 @@
+# Resolve on Python 3.12; the full environment is in requirements-sentiment.lock.
+-r requirements-acquisition.lock
+torch>=2.6,<3
+transformers>=4.51,<5
+safetensors>=0.4,<1

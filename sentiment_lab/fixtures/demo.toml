@@ -1,0 +1,9 @@
+schema_version = 1
+tickers = ["AAPL", "MSFT"]
+exchange = "XNYS"
+timezone = "America/New_York"
+decision_minutes_before_open = 5
+seed = 42
+train_fraction = 0.6
+validation_fraction = 0.2
+allow_historical_assumptions = false

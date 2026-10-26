@@ -1,0 +1,5 @@
+schema_version = 1
+split_policy = "reset_at_split_session"
+rsi_method = "wilder_seeded_sma"
+volatility_ddof = 1
+preprocessing = "train_median_standardize"
