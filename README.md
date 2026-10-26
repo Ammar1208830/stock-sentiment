@@ -21,6 +21,10 @@ The frozen 755-row test block spans 151 sessions. Price-only and combined LR bot
 
 Open `artifacts/m7-release/report.html`, `report.md` or `handoff.zip`. The package contains source, processed frozen inputs/models and evaluation artifacts. A clean extracted copy reproduces predictions and numerical intervals without network calls. The local dashboard includes Final results, partition selection and report/handoff links.
 
+## Frontend
+
+The redesigned React frontend uses shadcn/ui and Lucide. See [frontend setup](website/README.md) for development, builds and local snapshots. Generated data and reports are excluded from Git; a fresh clone displays an empty state until a research snapshot is supplied.
+
 ## M5: models and baselines
 
 ```bash

@@ -7,7 +7,9 @@ from pathlib import Path
 def export(project: Path):
     def read(path):
         return json.loads((project / path).read_text())
-    path = project / 'website/dist/data.json'
+    path = project / 'website/public/data.json'
+    if not path.exists():
+        raise FileNotFoundError('Copy a saved dashboard snapshot to website/public/data.json first.')
     data = json.loads(path.read_text())
     data['evaluation'] = read('artifacts/m6-evaluation/summary.json')
     data['uncertainty'] = read('artifacts/m6-evaluation/uncertainty.json')
@@ -20,7 +22,7 @@ def export(project: Path):
         milestone['done'] = True
     data['releaseStatus'] = 'Software complete; original empirical sentiment study data-gated.'
     path.write_text(json.dumps(data, separators=(',', ':')))
-    print('Local dashboard refreshed with frozen held-out results.')
+    print('Local dashboard snapshot refreshed. Run npm run build in website/ to update the static preview.')
 
 
 if __name__ == '__main__':

@@ -13,12 +13,15 @@ data/cache/
 artifacts/*
 !**/.gitkeep
 
-# Keep authored dashboard code; exclude generated data and release bundles.
-!website/dist/
-website/dist/*
-!website/dist/index.html
-!website/dist/style.css
-!website/dist/app.js
+# Frontend dependencies, build output and local research snapshots.
+node_modules/
+website/public/data.json
+website/public/report.html
+website/public/handoff.zip
+website/public/snapshot-assets.json
+*.tsbuildinfo
+website/.npm-cache/
+website/.sites-runtime/
 website/.openai/
 website/dashboard*.jpg
 .DS_Store
