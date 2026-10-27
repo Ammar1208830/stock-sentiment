@@ -2624,16 +2624,16 @@ footer > span > svg {
 .dark footer {
   border-color: var(--border);
 }
+/* Keep surfaces, labels and SVG colors on the same gentle timing. */
 @media (prefers-reduced-motion: no-preference) {
-  body,
-  .desktop-sidebar,
-  .topbar,
-  [data-slot="card"],
-  [data-slot="dialog-content"],
-  [data-slot="sheet-content"] {
-    transition:
-      background-color 160ms ease,
-      border-color 160ms ease,
-      color 160ms ease;
+  :root[data-theme-transition="colors"],
+  :root[data-theme-transition="colors"] *,
+  :root[data-theme-transition="colors"] *::before,
+  :root[data-theme-transition="colors"] *::after {
+    transition-property:
+      background-color, color, border-color, fill, stroke, stop-color,
+      box-shadow !important;
+    transition-duration: 480ms !important;
+    transition-timing-function: cubic-bezier(0.22, 1, 0.36, 1) !important;
   }
 }

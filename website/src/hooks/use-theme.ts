@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 
 type Theme = "light" | "dark";
 const key = "sentiment-lab-theme";
@@ -16,7 +16,10 @@ export function useTheme() {
   const [theme, setTheme] = useState<Theme>(() =>
     document.documentElement.classList.contains("dark") ? "dark" : "light",
   );
-  useEffect(() => {
+  const transitionTimer = useRef<ReturnType<typeof setTimeout> | undefined>(
+    undefined,
+  );
+  useLayoutEffect(() => {
     document.documentElement.classList.toggle("dark", theme === "dark");
     document.documentElement.style.colorScheme = theme;
     document
@@ -37,10 +40,22 @@ export function useTheme() {
     return () => {
       media.removeEventListener("change", systemChanged);
       removeEventListener("storage", storageChanged);
+      clearTimeout(transitionTimer.current);
+      document.documentElement.removeAttribute("data-theme-transition");
     };
   }, []);
   function toggleTheme() {
     const next = theme === "dark" ? "light" : "dark";
+    const root = document.documentElement;
+    clearTimeout(transitionTimer.current);
+    if (!matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      root.dataset.themeTransition = "colors";
+      transitionTimer.current = setTimeout(() => {
+        root.removeAttribute("data-theme-transition");
+      }, 550);
+    } else {
+      root.removeAttribute("data-theme-transition");
+    }
     try {
       localStorage.setItem(key, next);
     } catch {
