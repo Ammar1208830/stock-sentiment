@@ -12,6 +12,7 @@ import os
 from pathlib import Path
 import sqlite3
 import statistics
+import threading
 import tomllib
 from urllib.parse import urlsplit
 
@@ -259,7 +260,18 @@ def snapshot(root=ROOT):
         store.close()
 
 
-def serve(root=ROOT, port=8765):
+def refresh_cycle(root=ROOT, *, collect=refresh, compare=None):
+    """One unattended cycle; the collector owns the persisted six-hour due check."""
+    result = collect(root)
+    if result['status'] in {'ready', 'partial'}:
+        if compare is None:
+            from .price_replay import run
+            compare = run
+        compare(root)
+    return result
+
+
+def serve(root=ROOT, port=8765, auto_refresh=True):
     root = Path(root)
     class Handler(SimpleHTTPRequestHandler):
         def do_GET(self):
@@ -276,10 +288,22 @@ def serve(root=ROOT, port=8765):
                 return
             super().do_GET()
     server = ThreadingHTTPServer(('127.0.0.1', port), partial(Handler, directory=str(root / 'website/dist')))
-    print(f'News-only dashboard: http://127.0.0.1:{port}', flush=True)
+    stopped = threading.Event()
+    def scheduled_updates():
+        while not stopped.is_set():
+            try:
+                refresh_cycle(root)
+            except Exception as error:
+                print(f'Scheduled comparison failed ({type(error).__name__}); previous results retained.', flush=True)
+            stopped.wait(60)
+    if auto_refresh:
+        threading.Thread(target=scheduled_updates, name='six-hour-refresh', daemon=True).start()
+    print(f'Three-stock dashboard: http://127.0.0.1:{port}', flush=True)
+    print('Automatic six-hour refresh is enabled.' if auto_refresh else 'Automatic refresh is disabled.', flush=True)
     try:
         server.serve_forever()
     finally:
+        stopped.set()
         server.server_close()
 
 
@@ -290,9 +314,10 @@ def main():
     parser.add_argument('--force', action='store_true')
     parser.add_argument('--port', type=int, default=8765)
     parser.add_argument('--target', help='Completed trading date for the price comparison, YYYY-MM-DD')
+    parser.add_argument('--no-auto-refresh', action='store_true', help='Serve saved results without scheduled collection')
     args = parser.parse_args()
     if args.command == 'serve':
-        serve(args.root, args.port)
+        serve(args.root, args.port, auto_refresh=not args.no_auto_refresh)
     else:
         if args.command == 'compare':
             from .price_replay import run

@@ -54,7 +54,7 @@ A bounded recent news history is collected and scored once per completed target 
 
 ## Refreshing
 
-The news/price collector has a six-hour due check and an overlapping-run lease. Run `refresh` and then `compare` every six hours. The configured local Codex automation does this while the Mac is awake and Codex is available; it is not a cloud service. The browser checks saved results once a minute. A page reload does not spend NewsAPI requests.
+The local server includes its own background scheduler. Starting `sentiment_lab.live serve` automatically checks the persisted six-hour due time every minute, refreshes prices and news when due, and updates the comparison. No chat automation or manual refresh command is required. Keep the Mac awake and the server running. Use `--no-auto-refresh` to show saved results without collection. The browser checks saved results once a minute; a page reload does not spend NewsAPI requests.
 
 `compare` uses the latest completed exchange session by default, so weekends and holidays are handled by the exchange calendar. Headline requests and FinBERT scores are cached; capped searches are disclosed. Missing news is recorded as missing, not given invented neutral scores.
 

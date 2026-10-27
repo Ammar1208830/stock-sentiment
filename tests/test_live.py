@@ -4,7 +4,7 @@ import json
 import tempfile
 import unittest
 
-from sentiment_lab.live import LiveStore, news_summary, snapshot
+from sentiment_lab.live import LiveStore, news_summary, snapshot, refresh_cycle
 
 UTC = timezone.utc
 
@@ -32,6 +32,18 @@ class LiveFeedTests(unittest.TestCase):
         self.assertEqual(row['label'], 'unavailable')
         self.assertIsNone(row['polarity'])
         self.assertIsNone(row['neutral'])
+
+    def test_scheduler_does_not_collect_or_compare_before_due_time(self):
+        calls = []
+        result = refresh_cycle(self.root, collect=lambda root: {'status': 'not_due_or_already_running'},
+                               compare=lambda root: calls.append(root))
+        self.assertEqual(result['status'], 'not_due_or_already_running')
+        self.assertEqual(calls, [])
+
+    def test_scheduler_compares_after_successful_refresh(self):
+        calls = []
+        refresh_cycle(self.root, collect=lambda root: {'status': 'ready'}, compare=lambda root: calls.append(root))
+        self.assertEqual(calls, [self.root])
 
     def test_public_feed_filters_removed_stocks_and_does_not_expose_local_key(self):
         secret = 'fake-test-key-not-for-provider-use'
