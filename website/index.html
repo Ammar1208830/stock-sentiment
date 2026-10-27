@@ -5,6 +5,20 @@
     <link rel="icon" type="image/svg+xml" href="/logo.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="theme-color" content="#163d35" />
+    <script>
+      (() => {
+        let saved;
+        try {
+          saved = localStorage.getItem("sentiment-lab-theme");
+        } catch {}
+        const dark =
+          saved === "dark" ||
+          (saved !== "light" &&
+            matchMedia("(prefers-color-scheme: dark)").matches);
+        document.documentElement.classList.toggle("dark", dark);
+        document.documentElement.style.colorScheme = dark ? "dark" : "light";
+      })();
+    </script>
     <meta
       name="description"
       content="Stock Sentiment Lab — financial language, honest benchmarks, and reproducible research."

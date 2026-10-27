@@ -39,6 +39,8 @@ For the built-in local snapshot, copy the saved dashboard JSON to `public/data.j
 - Correct partition labels in metrics exports; overview stays on held-out results independently of the benchmark tab selection.
 - Actual saved uncertainty intervals and the source-data limitation remain visible. No live quotes, invented sentiment scores, or investment recommendations.
 - Mobile navigation, keyboard-accessible Radix controls and reduced-motion support.
+- Icon-only sun/moon toggle, saved light/dark preference, and muted mint, blue, violet and amber accents. The initial theme follows the operating system until a choice is saved.
+- GSAP handles short, staggered page/card entrances using `@gsap/react`. Anime.js draws the price line and fades its area when the ticker or date range changes. The libraries control separate elements; scopes are reverted on changes/unmount, and both respond to reduced-motion preferences.
 
 Components live in `src/components/ui/` and are copied from the official shadcn registry with its CLI. `components.json` preserves the setup for adding more. Lucide icons are imported individually from `lucide-react`. Third-party license notices are in `THIRD_PARTY_NOTICES.md`; exact dependency versions are recorded in `package-lock.json`.
 

@@ -11,7 +11,6 @@ import {
   CircleHelp,
   Database,
   ExternalLink,
-  FileText,
   FlaskConical,
   GitBranch,
   CodeXml,
@@ -21,11 +20,12 @@ import {
   LockKeyhole,
   Menu,
   MessageSquare,
+  Moon,
   Newspaper,
   Search,
   ShieldCheck,
   SlidersHorizontal,
-  Sparkles,
+  Sun,
   TrendingUp,
   Upload,
   X,
@@ -105,6 +105,8 @@ import {
   type View,
 } from "@/lib/research";
 import { cn } from "@/lib/utils";
+import { useDashboardMotion, usePriceChartMotion } from "@/hooks/use-motion";
+import { useTheme } from "@/hooks/use-theme";
 
 const navigation = [
   { id: "overview", label: "Overview", icon: LayoutDashboard },
@@ -315,6 +317,11 @@ function MetricCards({ data }: { data: ResearchData }) {
 }
 function PriceChart({ rows, ticker }: { rows: Price[]; ticker: string }) {
   const [hover, setHover] = useState<number | null>(null);
+  const chartRoot = useRef<HTMLDivElement>(null);
+  usePriceChartMotion(
+    chartRoot,
+    `${ticker}:${rows[0].date}:${rows.at(-1)!.date}:${rows.length}:${rows.at(-1)!.close}`,
+  );
   useEffect(() => setHover(null), [rows]);
   const W = 920,
     H = 285,
@@ -338,7 +345,7 @@ function PriceChart({ rows, ticker }: { rows: Price[]; ticker: string }) {
     .join(" ");
   const selected = hover == null ? null : rows[hover];
   return (
-    <div className="chart-wrap">
+    <div className="chart-wrap" ref={chartRoot}>
       <svg
         viewBox={`0 0 ${W} ${H}`}
         className="price-chart"
@@ -363,8 +370,12 @@ function PriceChart({ rows, ticker }: { rows: Price[]; ticker: string }) {
       >
         <defs>
           <linearGradient id="price-area" x1="0" x2="0" y1="0" y2="1">
-            <stop offset="0%" stopColor="#2d8e6e" stopOpacity=".17" />
-            <stop offset="100%" stopColor="#2d8e6e" stopOpacity=".005" />
+            <stop offset="0%" stopColor="var(--chart-area)" stopOpacity=".17" />
+            <stop
+              offset="100%"
+              stopColor="var(--chart-area)"
+              stopOpacity=".005"
+            />
           </linearGradient>
         </defs>
         {Array.from({ length: 5 }, (_, i) => {
@@ -376,13 +387,13 @@ function PriceChart({ rows, ticker }: { rows: Price[]; ticker: string }) {
                 x2={W - right + 8}
                 y1={y(value)}
                 y2={y(value)}
-                stroke="#e8ede8"
+                stroke="var(--chart-grid)"
                 strokeDasharray="3 5"
               />
               <text
                 x={W - right + 18}
                 y={y(value) + 4}
-                fill="#69775f"
+                fill="var(--chart-label)"
                 fontSize="11"
               >
                 ${value.toFixed(0)}
@@ -391,13 +402,15 @@ function PriceChart({ rows, ticker }: { rows: Price[]; ticker: string }) {
           );
         })}
         <path
+          data-chart-area=""
           d={`${path} L${x(rows.length - 1)},${H - bottom} L${left},${H - bottom} Z`}
           fill="url(#price-area)"
         />
         <path
+          data-chart-line=""
           d={path}
           fill="none"
-          stroke="#2b8061"
+          stroke="var(--chart-line)"
           strokeWidth="2.4"
           strokeLinejoin="round"
           strokeLinecap="round"
@@ -410,7 +423,7 @@ function PriceChart({ rows, ticker }: { rows: Price[]; ticker: string }) {
               x={x(index)}
               y={H - 5}
               textAnchor={i === 0 ? "start" : i === 4 ? "end" : "middle"}
-              fill="#69775f"
+              fill="var(--chart-label)"
               fontSize="11"
             >
               {new Date(rows[index].date + "T12:00:00Z").toLocaleDateString(
@@ -427,15 +440,15 @@ function PriceChart({ rows, ticker }: { rows: Price[]; ticker: string }) {
               x2={x(hover)}
               y1={top}
               y2={H - bottom}
-              stroke="#9ab3a1"
+              stroke="var(--chart-line)"
               strokeDasharray="4 4"
             />
             <circle
               cx={x(hover)}
               cy={y(selected.close)}
               r="5"
-              fill="#236a50"
-              stroke="white"
+              fill="var(--chart-line)"
+              stroke="var(--card)"
               strokeWidth="2.5"
             />
           </g>
@@ -444,8 +457,8 @@ function PriceChart({ rows, ticker }: { rows: Price[]; ticker: string }) {
             cx={x(rows.length - 1)}
             cy={y(rows.at(-1)!.close)}
             r="4"
-            fill="#236a50"
-            stroke="white"
+            fill="var(--chart-line)"
+            stroke="var(--card)"
             strokeWidth="2"
           />
         )}
@@ -868,7 +881,7 @@ function Sparkline({ rows }: { rows: Price[] }) {
           )
           .join(" ")}
         fill="none"
-        stroke="#418464"
+        stroke="var(--chart-line)"
         strokeWidth="1.6"
         strokeLinejoin="round"
       />
@@ -1392,6 +1405,8 @@ function ModelDetails({
 }
 
 export default function App() {
+  const { theme, toggleTheme } = useTheme();
+  const motionRoot = useRef<HTMLElement>(null);
   const [view, setView] = useState<View>(() =>
     validView(location.hash.slice(1))
       ? (location.hash.slice(1) as View)
@@ -1409,6 +1424,7 @@ export default function App() {
     [mobile, setMobile] = useState(false);
   const [assets, setAssets] = useState({ report: false, handoff: false });
   const fileInput = useRef<HTMLInputElement>(null);
+  useDashboardMotion(motionRoot, view, !loading && Boolean(data));
   useEffect(() => {
     const controller = new AbortController();
     fetch("data.json", { signal: controller.signal })
@@ -1457,7 +1473,12 @@ export default function App() {
     setView(name);
     location.hash = name;
     setMobile(false);
-    window.scrollTo({ top: 0, behavior: "smooth" });
+    window.scrollTo({
+      top: 0,
+      behavior: matchMedia("(prefers-reduced-motion: reduce)").matches
+        ? "auto"
+        : "smooth",
+    });
   };
   const inspect = (metric: Metric, selectedPartition: Partition) =>
     setDetail({ metric, partition: selectedPartition });
@@ -1536,6 +1557,26 @@ export default function App() {
                   <Button
                     variant="ghost"
                     size="icon"
+                    className="theme-toggle"
+                    onClick={toggleTheme}
+                    aria-label={
+                      theme === "dark"
+                        ? "Switch to light mode"
+                        : "Switch to dark mode"
+                    }
+                  >
+                    {theme === "dark" ? <Sun size={18} /> : <Moon size={18} />}
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>
+                  {theme === "dark" ? "Light mode" : "Dark mode"}
+                </TooltipContent>
+              </Tooltip>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    size="icon"
                     onClick={() => setHelp(true)}
                     aria-label="About this dashboard"
                   >
@@ -1560,7 +1601,7 @@ export default function App() {
               </Button>
             </div>
           </header>
-          <main>
+          <main ref={motionRoot}>
             <div className="page-heading">
               <div>
                 <div className="eyebrow">
