@@ -1,0 +1,10 @@
+schema_version = 1
+active_sources = ["newsapi", "yfinance"]
+refresh_hours = 6
+news_delay_hours = 24
+news_window_hours = 72
+news_pages_per_ticker = 1
+news_page_size = 100
+news_daily_request_budget = 90
+price_daily_call_budget = 40
+retention_days = 7

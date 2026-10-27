@@ -9,7 +9,7 @@ from .contracts import ContractError, ticker
 @dataclass(frozen=True)
 class Config:
     schema_version: int = 1
-    tickers: tuple[str, ...] = ("AAPL", "MSFT", "NVDA", "AMZN", "TSLA")
+    tickers: tuple[str, ...] = ("AAPL", "NVDA", "AMZN")
     exchange: str = "XNYS"
     timezone: str = "America/New_York"
     decision_minutes_before_open: int = 5

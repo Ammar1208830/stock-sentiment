@@ -1,47 +1,18 @@
-# Stock Sentiment Lab frontend
+# Three-stock dashboard
 
-React + TypeScript + Vite dashboard, with actual [shadcn/ui](https://github.com/shadcn-ui/ui) components, Tailwind CSS and [Lucide](https://github.com/lucide-icons/lucide) icons. The custom SVG logo represents a price/sentiment signal. The Python research pipeline is independent of the frontend.
+React, TypeScript, Vite, Tailwind, shadcn/ui and Lucide. Four views: Overview, News & sentiment, Price comparison and Market data. The primary comparison uses the actual combined FinBERT + price Ridge model, with dollar/percentage errors and two baselines.
 
-## Develop
-
-Use Node.js 22.19+ and npm. From this directory:
+The browser reads `/api/live` from the local Python service; there are no API keys in the frontend. Build and serve from the project root:
 
 ```bash
+cd website
 npm ci
-npm run dev
-```
-
-Open the URL printed by Vite. To verify and create a static build:
-
-```bash
 npm test
 npm run build
-npm run preview
+cd ..
+.venv/bin/python -m sentiment_lab.live serve --port 8765
 ```
 
-The build in `dist/` also works with the existing project-root command:
+To develop, keep the Python service on 8765 and run `npm run dev` here. Vite proxies `/api` to Python. Collection and model commands are described in the [project README](../README.md). A plain static HTTP server cannot provide the data API.
 
-```bash
-python3 -m http.server 8765 --bind 127.0.0.1 --directory website/dist
-```
-
-## Research snapshot
-
-The dashboard reads `public/data.json`. This saved local research snapshot is intentionally excluded from Git, along with datasets, reports and trained models. A fresh clone shows an explicit empty state rather than fabricated results. Use **Open research snapshot** to choose a compatible JSON snapshot; it is parsed locally in the browser. With an existing snapshot, the same action is in **Export data**.
-
-For the built-in local snapshot, copy the saved dashboard JSON to `public/data.json`. Optional local `public/report.html` and `public/handoff.zip` enable the report/download actions. The build checks whether those files exist, so missing assets are not shown as working links. Rebuild after adding or changing files. Refresh M6 results in an existing snapshot from the project root with `python3 website/export_dashboard.py`.
-
-## Included behavior
-
-- Overview, market data, model benchmarks, final results and research pipeline.
-- Equity and date-range controls, historical chart hover, and price CSV export.
-- Separate held-out/validation tabs, family/feature/search filters, baseline toggle and accessible model dialogs.
-- Correct partition labels in metrics exports; overview stays on held-out results independently of the benchmark tab selection.
-- Actual saved uncertainty intervals and the source-data limitation remain visible. No live quotes, invented sentiment scores, or investment recommendations.
-- Mobile navigation, keyboard-accessible Radix controls and reduced-motion support.
-- Icon-only sun/moon toggle, saved light/dark preference, and muted mint, blue, violet and amber accents. The initial theme follows the operating system until a choice is saved.
-- GSAP handles short, staggered page/card entrances using `@gsap/react`. Anime.js draws the price line and fades its area when the ticker or date range changes. The libraries control separate elements; scopes are reverted on changes/unmount, and both respond to reduced-motion preferences.
-
-Components live in `src/components/ui/` and are copied from the official shadcn registry with its CLI. `components.json` preserves the setup for adding more. Lucide icons are imported individually from `lucide-react`. Third-party license notices are in `THIRD_PARTY_NOTICES.md`; exact dependency versions are recorded in `package-lock.json`.
-
-The frontend is previewed locally. No Sites deployment is part of this change.
+The icon-only sun/moon control saves the selected theme. Theme colors transition together, GSAP animates short entrances, and Anime.js draws the price chart. Reduced-motion preferences are respected. Old research snapshots, reports and archive downloads are no longer used.

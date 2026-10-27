@@ -1,5 +1,12 @@
 export type Partition = "test" | "validation";
-export type View = "overview" | "market" | "models" | "results" | "pipeline";
+export type View =
+  | "overview"
+  | "market"
+  | "news"
+  | "tracker"
+  | "models"
+  | "results"
+  | "pipeline";
 export interface Price {
   date: string;
   close: number;
@@ -68,6 +75,7 @@ export const companyNames: Record<string, string> = {
   AMZN: "Amazon",
   TSLA: "Tesla",
 };
+export const activeTickers = ["AAPL", "NVDA", "AMZN"] as const;
 export const featureNames: Record<string, string> = {
   price_only: "Price only",
   price_news: "Price + news",
